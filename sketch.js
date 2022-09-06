@@ -2,6 +2,8 @@
 var bk, cake,cake_img;
 var boy, boy_img, boy_shot, boy_fail;
 var morc_voa, bart, rat;
+var cake;
+var boy;
 
 function preload(){ // função que carregar todas as imagens e animações
   bk = loadImage("assets/bk3.jpg");
@@ -9,6 +11,7 @@ function preload(){ // função que carregar todas as imagens e animações
   boy_img=loadAnimation("assets/p1.png","assets/p2.png","assets/p3.png");
   boy_shot=loadAnimation("assets/p4.png","assets/p5.png","assets/p6.png");
   boy_fail=loadAnimation("assets/p7.png","assets/p8.png","assets/p9.png");
+  
   boy_fail.looping= false;
   boy_shot.looping= false;
   boy_img.looping= false;
@@ -20,13 +23,53 @@ function preload(){ // função que carregar todas as imagens e animações
 
 function setup(){ // todas as configuraçoes dos objetos
   createCanvas(600,400);
-  
+  cake=createSprite(83,345,40,40)
+  cake.addImage("bolo",cake_img)
+  cake.scale=0.2
+  boy=createSprite(140,280,40,40)
+  boy.addAnimation("garoto",boy_img)
+  boy.addAnimation("garoto2",boy_shot)
+  boy.addAnimation("garoto3",boy_fail)
+  boy.scale=2
 }
 
 function draw(){
   background(bk);
+ inimigos();
+ control();
   drawSprites(); 
-
+  fill("black")
   text(mouseX+","+mouseY, mouseX, mouseY);
 }
 
+function inimigos(){
+
+  if(frameCount%60===0){
+    var animal
+    animal=createSprite(530,340,40,40)
+    animal.velocityX=-5
+   var number=Math.round(random(1,3))
+   switch (number) {
+    case 1:animal.addAnimation("bat",morc_voa)
+      
+      break;
+   case 2:animal.addAnimation("barata",bart)
+   
+   break;
+
+    case 3: animal.addAnimation("rato",rat)
+
+    break;
+   } 
+  }
+}
+function control(){
+  if(keyDown("space")){
+    boy.changeAnimation("garoto2",boy_shot)
+    boy.scale=1.5
+    setTimeout(() => {
+      boy.changeAnimation("garoto",boy_img)
+      boy.scale=2
+    }, 900);
+  }
+}
