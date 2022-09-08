@@ -4,7 +4,9 @@ var boy, boy_img, boy_shot, boy_fail;
 var morc_voa, bart, rat;
 var cake;
 var boy;
-
+var life=3;
+var inseto;
+var estado="jogar"
 function preload(){ // função que carregar todas as imagens e animações
   bk = loadImage("assets/bk3.jpg");
   cake_img=loadImage("assets/cake3.png");
@@ -31,12 +33,39 @@ function setup(){ // todas as configuraçoes dos objetos
   boy.addAnimation("garoto2",boy_shot)
   boy.addAnimation("garoto3",boy_fail)
   boy.scale=2
+  inseto= new Group()
 }
-
 function draw(){
   background(bk);
- inimigos();
- control();
+  if(estado==="jogar"){
+          inimigos();
+      control();
+      for(var i=0; i<life;i++){
+        circle(470+(i*50),70,50)
+        image(cake_img,450+(i*50),46,40,40)
+      }
+      if(inseto.isTouching(cake)){
+        inseto.destroyEach()
+        boy.changeAnimation("garoto3",boy_fail)
+        boy.scale=1.5
+      life--
+    cake.visible=false
+    setTimeout(() => {
+      boy.changeAnimation("garoto",boy_img)
+      boy.scale=2
+      cake.visible=true
+    }, 900);
+    }
+  }
+  else if(estado==="fim"){
+    inseto.destroyEach();
+    cake.visible=false
+    boy.changeAnimation("garoto3",boy_fail)
+    boy.x=300
+    boy.y=280
+    
+  } 
+ 
   drawSprites(); 
   fill("black")
   text(mouseX+","+mouseY, mouseX, mouseY);
@@ -46,7 +75,7 @@ function inimigos(){
 
   if(frameCount%60===0){
     var animal
-    animal=createSprite(530,340,40,40)
+    animal=createSprite(620,340,40,40)
     animal.velocityX=-5
    var number=Math.round(random(1,3))
    switch (number) {
@@ -60,7 +89,9 @@ function inimigos(){
     case 3: animal.addAnimation("rato",rat)
 
     break;
-   } 
+   }
+   animal.lifetime=200
+   inseto.add(animal)
   }
 }
 function control(){
@@ -71,5 +102,8 @@ function control(){
       boy.changeAnimation("garoto",boy_img)
       boy.scale=2
     }, 900);
+  }
+  if(life===0){
+    estado="fim"
   }
 }
