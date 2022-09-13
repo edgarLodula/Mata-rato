@@ -7,6 +7,10 @@ var boy;
 var life=3;
 var inseto;
 var estado="jogar"
+var sandalia;
+var chinelo;
+var ponto=0
+var button,button_img;
 function preload(){ // função que carregar todas as imagens e animações
   bk = loadImage("assets/bk3.jpg");
   cake_img=loadImage("assets/cake3.png");
@@ -21,6 +25,9 @@ function preload(){ // função que carregar todas as imagens e animações
   morc_voa=loadAnimation("assets/m1.png","assets/m2.png","assets/m3.png","assets/m4.png");
   bart=loadAnimation("assets/b1.png","assets/b2.png","assets/b3.png");
   rat=loadAnimation("assets/r1.png","assets/r2.png","assets/r3.png","assets/r4.png","assets/r5.png","assets/r6.png","assets/r7.png");
+
+  sandalia=loadImage("assets/sand.png")
+  button_img=loadImage("assets/restart_button.png")
 }
 
 function setup(){ // todas as configuraçoes dos objetos
@@ -34,6 +41,10 @@ function setup(){ // todas as configuraçoes dos objetos
   boy.addAnimation("garoto3",boy_fail)
   boy.scale=2
   inseto= new Group()
+  chinelo= new Group()
+  button=createSprite(300,130,10,10)
+  button.addImage("botao",button_img)
+  button.scale=0.2
 }
 function draw(){
   background(bk);
@@ -50,12 +61,19 @@ function draw(){
         boy.scale=1.5
       life--
     cake.visible=false
+    ponto=0
     setTimeout(() => {
       boy.changeAnimation("garoto",boy_img)
       boy.scale=2
       cake.visible=true
     }, 900);
     }
+      chinelo.overlap(inseto,function(coletor,coletado){
+        coletado.remove()
+        ponto=ponto+1
+    })
+    text("placar: "+ponto,300,17)
+    button.visible=false
   }
   else if(estado==="fim"){
     inseto.destroyEach();
@@ -63,7 +81,12 @@ function draw(){
     boy.changeAnimation("garoto3",boy_fail)
     boy.x=300
     boy.y=280
-    
+    button.visible=true
+    if(mousePressedOver(button)){
+      estado="jogar"
+      cake.visible=true
+      boy.changeAnimation("garoto",boy_img)
+    }
   } 
  
   drawSprites(); 
@@ -73,10 +96,10 @@ function draw(){
 
 function inimigos(){
 
-  if(frameCount%60===0){
+  if(frameCount%(60-(ponto*2))===0){
     var animal
     animal=createSprite(620,340,40,40)
-    animal.velocityX=-5
+    animal.velocityX=-(5+ponto)
    var number=Math.round(random(1,3))
    switch (number) {
     case 1:animal.addAnimation("bat",morc_voa)
@@ -102,8 +125,18 @@ function control(){
       boy.changeAnimation("garoto",boy_img)
       boy.scale=2
     }, 900);
+    Lancamento();
   }
   if(life===0){
     estado="fim"
   }
+}
+function Lancamento(){
+var sand= createSprite(boy.x,boy.y,10,10)
+sand.addImage("sandalha",sandalia)
+sand.scale=0.2
+sand.velocityX=5
+sand.velocityY=6
+chinelo.add(sand);
+sand.lifetime=45
 }
