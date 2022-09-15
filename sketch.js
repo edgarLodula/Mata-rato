@@ -86,6 +86,9 @@ function draw(){
       estado="jogar"
       cake.visible=true
       boy.changeAnimation("garoto",boy_img)
+      life=3
+      boy.x=140
+      boy.y=280
     }
   } 
  
